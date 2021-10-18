@@ -10,9 +10,7 @@ const homeScreen = () => {
   const [data, setData] = useState([]);
   const [after, setAfter] = useState("");
   const [search, setSearch] = useState("");
-  const [index, setIndex] = useState(0);
   const [subReddit, setSubReddit] = useState("dankmeme");
-  const [showNext, setShowNext] = useState(false);
 
   const getMyMemes = async () => {
     try {
@@ -29,7 +27,7 @@ const homeScreen = () => {
         const postDetails = parsedData.data.children;
         setTotalPost(parsedData.data.dist);
         postDetails.forEach((item) => {
-          if (item.data.url) {
+          if (item.data.thumbnail !== "self") {
             const detailsToShow = {
               title: item.data.title,
               url: item.data.url,
@@ -51,6 +49,14 @@ const homeScreen = () => {
     }
   };
 
+  const editForSearch = () => {
+    if (search) {
+      setData([]);
+      setAfter("");
+      setSubReddit(search);
+    }
+  };
+
   useEffect(() => {
     getMyMemes();
   }, [subReddit]);
@@ -60,9 +66,7 @@ const homeScreen = () => {
       <HeaderScreen />
       <SearchBar
         onSubmitEditing={() => {
-          setData([]);
-          setAfter("");
-          setSubReddit(search);
+          editForSearch();
           getMyMemes();
         }}
         placeholder="Search a subreddit..."
@@ -84,7 +88,6 @@ const homeScreen = () => {
           />
         </>
       )}
-      {showNext && <Button title="Next" raised onPress={getMyMemes} />}
     </>
   );
 };
